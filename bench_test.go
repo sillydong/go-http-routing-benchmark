@@ -164,6 +164,12 @@ func BenchmarkHttpTreeMux_Param(b *testing.B) {
 	r, _ := http.NewRequest("GET", "/user/gordon", nil)
 	benchRequest(b, router, r)
 }
+func BenchmarkServeMux_Param(b *testing.B) {
+	router := loadServeMuxSingle("GET", "/user/{name}", httpHandlerFunc)
+
+	r, _ := http.NewRequest("GET", "/user/gordon", nil)
+	benchRequest(b, router, r)
+}
 
 // Route with 5 Params (no write)
 const fiveColon = "/:a/:b/:c/:d/:e"
@@ -226,6 +232,12 @@ func BenchmarkHttpRouter_Param5(b *testing.B) {
 }
 func BenchmarkHttpTreeMux_Param5(b *testing.B) {
 	router := loadHttpTreeMuxSingle("GET", fiveColon, httpTreeMuxHandler)
+
+	r, _ := http.NewRequest("GET", fiveRoute, nil)
+	benchRequest(b, router, r)
+}
+func BenchmarkServeMux_Param5(b *testing.B) {
+	router := loadServeMuxSingle("GET", fiveBrace, httpHandlerFunc)
 
 	r, _ := http.NewRequest("GET", fiveRoute, nil)
 	benchRequest(b, router, r)
@@ -296,6 +308,12 @@ func BenchmarkHttpTreeMux_Param20(b *testing.B) {
 	r, _ := http.NewRequest("GET", twentyRoute, nil)
 	benchRequest(b, router, r)
 }
+func BenchmarkServeMux_Param20(b *testing.B) {
+	router := loadServeMuxSingle("GET", twentyBrace, httpHandlerFunc)
+
+	r, _ := http.NewRequest("GET", twentyRoute, nil)
+	benchRequest(b, router, r)
+}
 
 // Route with Param and write
 func BenchmarkChi_ParamWrite(b *testing.B) {
@@ -354,6 +372,12 @@ func BenchmarkHttpRouter_ParamWrite(b *testing.B) {
 }
 func BenchmarkHttpTreeMux_ParamWrite(b *testing.B) {
 	router := loadHttpTreeMuxSingle("GET", "/user/:name", httpTreeMuxHandlerWrite)
+
+	r, _ := http.NewRequest("GET", "/user/gordon", nil)
+	benchRequest(b, router, r)
+}
+func BenchmarkServeMux_ParamWrite(b *testing.B) {
+	router := loadServeMuxSingle("GET", "/user/{name}", serveMuxHandlerWrite)
 
 	r, _ := http.NewRequest("GET", "/user/gordon", nil)
 	benchRequest(b, router, r)

@@ -78,6 +78,35 @@ func httpHandlerFuncTest(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, r.RequestURI)
 }
 
+// new servmux
+func serveMuxHandlerWrite(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, r.PathValue("name"))
+}
+
+func loadServeMux(routes []route) http.Handler {
+	h := httpHandlerFunc
+	if loadTestHandler {
+		h = httpHandlerFuncTest
+	}
+
+	re := regexp.MustCompile(":([^/]*)")
+
+	mux := http.NewServeMux()
+	for _, route := range routes {
+		path := re.ReplaceAllString(route.path, "{$1}")
+
+		mux.HandleFunc(fmt.Sprintf("%s %s", route.method, path), h)
+	}
+
+	return mux
+}
+
+func loadServeMuxSingle(method, path string, handler http.HandlerFunc) http.Handler {
+	router := http.NewServeMux()
+	router.HandleFunc(fmt.Sprintf("%s %s", method, path), handler)
+	return router
+}
+
 // chi
 func chiHandleWrite(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, chi.URLParam(r, "name"))

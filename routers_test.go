@@ -21,6 +21,7 @@ var (
 		{"Gojiv2", loadGojiv2},
 		{"HttpRouter", loadHttpRouter},
 		{"HttpTreeMux", loadHttpTreeMux},
+		{"ServeMux", loadServeMux},
 	}
 
 	// all APIs

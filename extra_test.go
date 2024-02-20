@@ -26,6 +26,7 @@ var (
 	extraGorillaMux http.Handler
 	// extraHttpRouter  http.Handler
 	extraHttpTreeMux http.Handler
+	extraServeMux    http.Handler
 )
 
 func init() {
@@ -57,6 +58,9 @@ func init() {
 	// })
 	calcMem("HttpTreeMux", func() {
 		extraHttpTreeMux = loadHttpTreeMux(extraAPI)
+	})
+	calcMem("ServeMux", func() {
+		extraServeMux = loadServeMux(extraAPI)
 	})
 
 	println()
@@ -100,6 +104,10 @@ func BenchmarkHttpTreeMux_ExtraStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/users", nil)
 	benchRequest(b, extraHttpTreeMux, req)
 }
+func BenchmarkServeMux_ExtraStatic(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/users", nil)
+	benchRequest(b, extraServeMux, req)
+}
 
 // One Param
 func BenchmarkDenco_ExtraParam(b *testing.B) {
@@ -138,6 +146,10 @@ func BenchmarkGorillaMux_ExtraParam(b *testing.B) {
 func BenchmarkHttpTreeMux_ExtraParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
 	benchRequest(b, extraHttpTreeMux, req)
+}
+func BenchmarkServeMux_ExtraParam(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
+	benchRequest(b, extraServeMux, req)
 }
 
 // Two Params
@@ -178,6 +190,12 @@ func BenchmarkHttpTreeMux_Extra2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
 	benchRequest(b, extraHttpTreeMux, req)
 }
+func BenchmarkServeMux_Extra2Params(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
+	benchRequest(b, extraServeMux, req)
+}
+
+// All routes
 func BenchmarkDenco_ExtraAll(b *testing.B) {
 	benchRoutes(b, extraDenco, extraAPI)
 }
@@ -202,4 +220,7 @@ func BenchmarkGojiv2_ExtraAll(b *testing.B) {
 //	}
 func BenchmarkHttpTreeMux_ExtraAll(b *testing.B) {
 	benchRoutes(b, extraHttpTreeMux, extraAPI)
+}
+func BenchmarkServeMux_ExtraAll(b *testing.B) {
+	benchRoutes(b, extraServeMux, extraAPI)
 }

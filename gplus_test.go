@@ -46,6 +46,7 @@ var (
 	gplusGorillaMux  http.Handler
 	gplusHttpRouter  http.Handler
 	gplusHttpTreeMux http.Handler
+	gplusServeMux    http.Handler
 )
 
 func init() {
@@ -80,6 +81,9 @@ func init() {
 	})
 	calcMem("HttpTreeMux", func() {
 		gplusHttpTreeMux = loadHttpTreeMux(gplusAPI)
+	})
+	calcMem("ServeMux", func() {
+		gplusServeMux = loadServeMux(gplusAPI)
 	})
 
 	println()
@@ -126,6 +130,10 @@ func BenchmarkHttpTreeMux_GPlusStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people", nil)
 	benchRequest(b, gplusHttpTreeMux, req)
 }
+func BenchmarkServeMux_GPlusStatic(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/people", nil)
+	benchRequest(b, gplusServeMux, req)
+}
 
 // One Param
 func BenchmarkChi_GPlusParam(b *testing.B) {
@@ -167,6 +175,10 @@ func BenchmarkHttpRouter_GPlusParam(b *testing.B) {
 func BenchmarkHttpTreeMux_GPlusParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people/118051310819094153327", nil)
 	benchRequest(b, gplusHttpTreeMux, req)
+}
+func BenchmarkServeMux_GPlusParam(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/people/118051310819094153327", nil)
+	benchRequest(b, gplusServeMux, req)
 }
 
 // Two Params
@@ -210,6 +222,10 @@ func BenchmarkHttpTreeMux_GPlus2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people/118051310819094153327/activities/123456789", nil)
 	benchRequest(b, gplusHttpTreeMux, req)
 }
+func BenchmarkServeMux_GPlus2Params(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/people/118051310819094153327/activities/123456789", nil)
+	benchRequest(b, gplusServeMux, req)
+}
 
 // All Routes
 func BenchmarkChi_GPlusAll(b *testing.B) {
@@ -241,4 +257,7 @@ func BenchmarkHttpRouter_GPlusAll(b *testing.B) {
 }
 func BenchmarkHttpTreeMux_GPlusAll(b *testing.B) {
 	benchRoutes(b, gplusHttpTreeMux, gplusAPI)
+}
+func BenchmarkServeMux_GPlusAll(b *testing.B) {
+	benchRoutes(b, gplusServeMux, gplusAPI)
 }

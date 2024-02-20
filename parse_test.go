@@ -66,6 +66,7 @@ var (
 	parseGorillaMux  http.Handler
 	parseHttpRouter  http.Handler
 	parseHttpTreeMux http.Handler
+	parseServeMux    http.Handler
 )
 
 func init() {
@@ -92,11 +93,17 @@ func init() {
 	calcMem("Gojiv2", func() {
 		parseGojiv2 = loadGojiv2(parseAPI)
 	})
+	calcMem("GorillaMux", func() {
+		parseGorillaMux = loadGorillaMux(parseAPI)
+	})
 	calcMem("HttpRouter", func() {
 		parseHttpRouter = loadHttpRouter(parseAPI)
 	})
 	calcMem("HttpTreeMux", func() {
 		parseHttpTreeMux = loadHttpTreeMux(parseAPI)
+	})
+	calcMem("ServeMux", func() {
+		parseServeMux = loadServeMux(parseAPI)
 	})
 
 	println()
@@ -143,6 +150,10 @@ func BenchmarkHttpTreeMux_ParseStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/users", nil)
 	benchRequest(b, parseHttpTreeMux, req)
 }
+func BenchmarkServeMux_ParseStatic(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/users", nil)
+	benchRequest(b, parseServeMux, req)
+}
 
 // One Param
 func BenchmarkChi_ParseParam(b *testing.B) {
@@ -184,6 +195,10 @@ func BenchmarkHttpRouter_ParseParam(b *testing.B) {
 func BenchmarkHttpTreeMux_ParseParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
 	benchRequest(b, parseHttpTreeMux, req)
+}
+func BenchmarkServeMux_ParseParam(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
+	benchRequest(b, parseServeMux, req)
 }
 
 // Two Params
@@ -227,6 +242,10 @@ func BenchmarkHttpTreeMux_Parse2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
 	benchRequest(b, parseHttpTreeMux, req)
 }
+func BenchmarkServeMux_Parse2Params(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
+	benchRequest(b, parseServeMux, req)
+}
 
 // All Routes
 func BenchmarkChi_ParseAll(b *testing.B) {
@@ -258,4 +277,7 @@ func BenchmarkHttpRouter_ParseAll(b *testing.B) {
 }
 func BenchmarkHttpTreeMux_ParseAll(b *testing.B) {
 	benchRoutes(b, parseHttpTreeMux, parseAPI)
+}
+func BenchmarkServeMux_ParseAll(b *testing.B) {
+	benchRoutes(b, parseServeMux, parseAPI)
 }

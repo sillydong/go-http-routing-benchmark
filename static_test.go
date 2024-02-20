@@ -182,6 +182,7 @@ var (
 	staticGorillaMux  http.Handler
 	staticHttpRouter  http.Handler
 	staticHttpTreeMux http.Handler
+	staticServeMux    http.Handler
 )
 
 func init() {
@@ -225,6 +226,9 @@ func init() {
 	calcMem("HttpTreeMux", func() {
 		staticHttpTreeMux = loadHttpTreeMux(staticRoutes)
 	})
+	calcMem("ServeMux", func() {
+		staticServeMux = loadServeMux(staticRoutes)
+	})
 
 	println()
 }
@@ -263,4 +267,7 @@ func BenchmarkHttpRouter_StaticAll(b *testing.B) {
 }
 func BenchmarkHttpTreeMux_StaticAll(b *testing.B) {
 	benchRoutes(b, staticHttpRouter, staticRoutes)
+}
+func BenchmarkServeMux_StaticAll(b *testing.B) {
+	benchRoutes(b, staticServeMux, staticRoutes)
 }
