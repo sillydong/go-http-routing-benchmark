@@ -60,9 +60,6 @@ var (
 	parseDenco       http.Handler
 	parseEcho        http.Handler
 	parseGin         http.Handler
-	parseGocraftWeb  http.Handler
-	parseGoji        http.Handler
-	parseGojiv2      http.Handler
 	parseGorillaMux  http.Handler
 	parseHttpRouter  http.Handler
 	parseHttpTreeMux http.Handler
@@ -83,15 +80,6 @@ func init() {
 	})
 	calcMem("Gin", func() {
 		parseGin = loadGin(parseAPI)
-	})
-	calcMem("GocraftWeb", func() {
-		parseGocraftWeb = loadGocraftWeb(parseAPI)
-	})
-	calcMem("Goji", func() {
-		parseGoji = loadGoji(parseAPI)
-	})
-	calcMem("Gojiv2", func() {
-		parseGojiv2 = loadGojiv2(parseAPI)
 	})
 	calcMem("GorillaMux", func() {
 		parseGorillaMux = loadGorillaMux(parseAPI)
@@ -125,18 +113,6 @@ func BenchmarkEcho_ParseStatic(b *testing.B) {
 func BenchmarkGin_ParseStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/users", nil)
 	benchRequest(b, parseGin, req)
-}
-func BenchmarkGocraftWeb_ParseStatic(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/users", nil)
-	benchRequest(b, parseGocraftWeb, req)
-}
-func BenchmarkGoji_ParseStatic(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/users", nil)
-	benchRequest(b, parseGoji, req)
-}
-func BenchmarkGojiv2_ParseStatic(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/users", nil)
-	benchRequest(b, parseGojiv2, req)
 }
 func BenchmarkGorillaMux_ParseStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/users", nil)
@@ -172,18 +148,6 @@ func BenchmarkGin_ParseParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
 	benchRequest(b, parseGin, req)
 }
-func BenchmarkGocraftWeb_ParseParam(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
-	benchRequest(b, parseGocraftWeb, req)
-}
-func BenchmarkGoji_ParseParam(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
-	benchRequest(b, parseGoji, req)
-}
-func BenchmarkGojiv2_ParseParam(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
-	benchRequest(b, parseGojiv2, req)
-}
 func BenchmarkGorillaMux_ParseParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
 	benchRequest(b, parseGorillaMux, req)
@@ -218,18 +182,6 @@ func BenchmarkGin_Parse2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
 	benchRequest(b, parseGin, req)
 }
-func BenchmarkGocraftWeb_Parse2Params(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
-	benchRequest(b, parseGocraftWeb, req)
-}
-func BenchmarkGoji_Parse2Params(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
-	benchRequest(b, parseGoji, req)
-}
-func BenchmarkGojiv2_Parse2Params(b *testing.B) {
-	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
-	benchRequest(b, parseGojiv2, req)
-}
 func BenchmarkGorillaMux_Parse2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
 	benchRequest(b, parseGorillaMux, req)
@@ -259,15 +211,6 @@ func BenchmarkEcho_ParseAll(b *testing.B) {
 }
 func BenchmarkGin_ParseAll(b *testing.B) {
 	benchRoutes(b, parseGin, parseAPI)
-}
-func BenchmarkGocraftWeb_ParseAll(b *testing.B) {
-	benchRoutes(b, parseGocraftWeb, parseAPI)
-}
-func BenchmarkGoji_ParseAll(b *testing.B) {
-	benchRoutes(b, parseGoji, parseAPI)
-}
-func BenchmarkGojiv2_ParseAll(b *testing.B) {
-	benchRoutes(b, parseGojiv2, parseAPI)
 }
 func BenchmarkGorillaMux_ParseAll(b *testing.B) {
 	benchRoutes(b, parseGorillaMux, parseAPI)

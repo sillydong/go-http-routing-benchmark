@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -16,9 +17,6 @@ var (
 		{"Denco", loadDenco},
 		{"Echo", loadEcho},
 		{"Gin", loadGin},
-		{"GocraftWeb", loadGocraftWeb},
-		{"Goji", loadGoji},
-		{"Gojiv2", loadGojiv2},
 		{"HttpRouter", loadHttpRouter},
 		{"HttpTreeMux", loadHttpTreeMux},
 		{"ServeMux", loadServeMux},
@@ -55,10 +53,10 @@ func TestRouters(t *testing.T) {
 				u.Path = route.path
 				u.RawQuery = rq
 				r.ServeHTTP(w, req)
-				if w.Code != 200 || w.Body.String() != route.path {
+				if w.Code != 200 || strings.TrimSpace(w.Body.String()) != `"`+route.path+`"` {
 					t.Errorf(
-						"%s in API %s: %d - %s; expected %s %s\n",
-						router.name, api.name, w.Code, w.Body.String(), route.method, route.path,
+						"%s in API %s: %d - `%s`; expected `%s`\n",
+						router.name, api.name, w.Code, strings.TrimSpace(w.Body.String()), route.path,
 					)
 				}
 			}

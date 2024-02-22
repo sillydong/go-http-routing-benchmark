@@ -176,9 +176,6 @@ var (
 	staticDenco       http.Handler
 	staticEcho        http.Handler
 	staticGin         http.Handler
-	staticGocraftWeb  http.Handler
-	staticGoji        http.Handler
-	staticGojiv2      http.Handler
 	staticGorillaMux  http.Handler
 	staticHttpRouter  http.Handler
 	staticHttpTreeMux http.Handler
@@ -191,7 +188,7 @@ func init() {
 	calcMem("HttpServeMux", func() {
 		serveMux := http.NewServeMux()
 		for _, route := range staticRoutes {
-			serveMux.HandleFunc(route.path, httpHandlerFunc)
+			serveMux.HandleFunc(route.path, Wrap(EmptyController))
 		}
 		staticHttpServeMux = serveMux
 	})
@@ -207,15 +204,6 @@ func init() {
 	})
 	calcMem("Gin", func() {
 		staticGin = loadGin(staticRoutes)
-	})
-	calcMem("GocraftWeb", func() {
-		staticGocraftWeb = loadGocraftWeb(staticRoutes)
-	})
-	calcMem("Goji", func() {
-		staticGoji = loadGoji(staticRoutes)
-	})
-	calcMem("Gojiv2", func() {
-		staticGojiv2 = loadGojiv2(staticRoutes)
 	})
 	calcMem("GorillaMux", func() {
 		staticGorillaMux = loadGorillaMux(staticRoutes)
@@ -249,15 +237,6 @@ func BenchmarkEcho_StaticAll(b *testing.B) {
 }
 func BenchmarkGin_StaticAll(b *testing.B) {
 	benchRoutes(b, staticGin, staticRoutes)
-}
-func BenchmarkGocraftWeb_StaticAll(b *testing.B) {
-	benchRoutes(b, staticGocraftWeb, staticRoutes)
-}
-func BenchmarkGoji_StaticAll(b *testing.B) {
-	benchRoutes(b, staticGoji, staticRoutes)
-}
-func BenchmarkGojiv2_StaticAll(b *testing.B) {
-	benchRoutes(b, staticGojiv2, staticRoutes)
 }
 func BenchmarkGorillaMux_StaticAll(b *testing.B) {
 	benchRoutes(b, staticGorillaMux, staticRoutes)
