@@ -36,6 +36,7 @@ var gplusAPI = []route{
 }
 
 var (
+	gplusHttpServeMux    http.Handler
 	gplusAce             http.Handler
 	gplusAero            http.Handler
 	gplusBear            http.Handler
@@ -74,6 +75,9 @@ var (
 func init() {
 	println("#GPlusAPI Routes:", len(gplusAPI))
 
+	calcMem("HttpServeMux", func() {
+		gplusHttpServeMux = loadServeMux(gplusAPI)
+	})
 	calcMem("Ace", func() {
 		gplusAce = loadAce(gplusAPI)
 	})
@@ -178,6 +182,10 @@ func init() {
 }
 
 // Static
+func BenchmarkHttpServeMux_GPlusStatic(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/people", nil)
+	benchRequest(b, gplusHttpServeMux, req)
+}
 func BenchmarkAce_GPlusStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people", nil)
 	benchRequest(b, gplusAce, req)
@@ -283,10 +291,10 @@ func BenchmarkR2router_GPlusStatic(b *testing.B) {
 	benchRequest(b, gplusR2router, req)
 }
 
-// func BenchmarkRevel_GPlusStatic(b *testing.B) {
-// 	req, _ := http.NewRequest("GET", "/people", nil)
-// 	benchRequest(b, gplusRevel, req)
-// }
+//	func BenchmarkRevel_GPlusStatic(b *testing.B) {
+//		req, _ := http.NewRequest("GET", "/people", nil)
+//		benchRequest(b, gplusRevel, req)
+//	}
 func BenchmarkRivet_GPlusStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people", nil)
 	benchRequest(b, gplusRivet, req)
@@ -314,6 +322,10 @@ func BenchmarkVulcan_GPlusStatic(b *testing.B) {
 // }
 
 // One Param
+func BenchmarkHttpServeMux_GPlusParam(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/people/118051310819094153327", nil)
+	benchRequest(b, gplusHttpServeMux, req)
+}
 func BenchmarkAce_GPlusParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people/118051310819094153327", nil)
 	benchRequest(b, gplusAce, req)
@@ -419,10 +431,10 @@ func BenchmarkR2router_GPlusParam(b *testing.B) {
 	benchRequest(b, gplusR2router, req)
 }
 
-// func BenchmarkRevel_GPlusParam(b *testing.B) {
-// 	req, _ := http.NewRequest("GET", "/people/118051310819094153327", nil)
-// 	benchRequest(b, gplusRevel, req)
-// }
+//	func BenchmarkRevel_GPlusParam(b *testing.B) {
+//		req, _ := http.NewRequest("GET", "/people/118051310819094153327", nil)
+//		benchRequest(b, gplusRevel, req)
+//	}
 func BenchmarkRivet_GPlusParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people/118051310819094153327", nil)
 	benchRequest(b, gplusRivet, req)
@@ -450,6 +462,10 @@ func BenchmarkVulcan_GPlusParam(b *testing.B) {
 // }
 
 // Two Params
+func BenchmarkHttpServeMux_GPlus2Params(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/people/118051310819094153327/activities/123456789", nil)
+	benchRequest(b, gplusHttpServeMux, req)
+}
 func BenchmarkAce_GPlus2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people/118051310819094153327/activities/123456789", nil)
 	benchRequest(b, gplusAce, req)
@@ -555,10 +571,10 @@ func BenchmarkR2router_GPlus2Params(b *testing.B) {
 	benchRequest(b, gplusR2router, req)
 }
 
-// func BenchmarkRevel_GPlus2Params(b *testing.B) {
-// 	req, _ := http.NewRequest("GET", "/people/118051310819094153327/activities/123456789", nil)
-// 	benchRequest(b, gplusRevel, req)
-// }
+//	func BenchmarkRevel_GPlus2Params(b *testing.B) {
+//		req, _ := http.NewRequest("GET", "/people/118051310819094153327/activities/123456789", nil)
+//		benchRequest(b, gplusRevel, req)
+//	}
 func BenchmarkRivet_GPlus2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/people/118051310819094153327/activities/123456789", nil)
 	benchRequest(b, gplusRivet, req)
@@ -586,6 +602,9 @@ func BenchmarkVulcan_GPlus2Params(b *testing.B) {
 // }
 
 // All Routes
+func BenchmarkHttpServeMux_GPlusAll(b *testing.B) {
+	benchRoutes(b, gplusHttpServeMux, gplusAPI)
+}
 func BenchmarkAce_GPlusAll(b *testing.B) {
 	benchRoutes(b, gplusAce, gplusAPI)
 }
@@ -665,9 +684,9 @@ func BenchmarkR2router_GPlusAll(b *testing.B) {
 	benchRoutes(b, gplusR2router, gplusAPI)
 }
 
-// func BenchmarkRevel_GPlusAll(b *testing.B) {
-// 	benchRoutes(b, gplusRevel, gplusAPI)
-// }
+//	func BenchmarkRevel_GPlusAll(b *testing.B) {
+//		benchRoutes(b, gplusRevel, gplusAPI)
+//	}
 func BenchmarkRivet_GPlusAll(b *testing.B) {
 	benchRoutes(b, gplusRivet, gplusAPI)
 }

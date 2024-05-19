@@ -12,6 +12,7 @@ var (
 		name string
 		load func(routes []route) http.Handler
 	}{
+		{"HttpServeMux", loadServeMux},
 		{"Ace", loadAce},
 		{"Aero", loadAero},
 		{"Bear", loadBear},

@@ -104,6 +104,12 @@ func benchRoutes(b *testing.B, router http.Handler, routes []route) {
 // Micro Benchmarks
 
 // Route with Param (no write)
+func BenchmarkHttpServeMux_Param(b *testing.B) {
+	router := loadServeMuxSingle("GET", "/user/{name}", httpHandlerFunc)
+
+	r, _ := http.NewRequest("GET", "/user/gordon", nil)
+	benchRequest(b, router, r)
+}
 func BenchmarkAce_Param(b *testing.B) {
 	router := loadAceSingle("GET", "/user/:name", aceHandle)
 
@@ -268,9 +274,9 @@ func BenchmarkR2router_Param(b *testing.B) {
 // func BenchmarkRevel_Param(b *testing.B) {
 // 	router := loadRevelSingle("GET", "/user/:name", "RevelController.Handle")
 
-// 	r, _ := http.NewRequest("GET", "/user/gordon", nil)
-// 	benchRequest(b, router, r)
-// }
+//		r, _ := http.NewRequest("GET", "/user/gordon", nil)
+//		benchRequest(b, router, r)
+//	}
 func BenchmarkRivet_Param(b *testing.B) {
 	router := loadRivetSingle("GET", "/user/:name", rivetHandler)
 
@@ -314,6 +320,12 @@ const fiveColon = "/:a/:b/:c/:d/:e"
 const fiveBrace = "/{a}/{b}/{c}/{d}/{e}"
 const fiveRoute = "/test/test/test/test/test"
 
+func BenchmarkHttpServeMux_Param5(b *testing.B) {
+	router := loadServeMuxSingle("GET", fiveBrace, httpHandlerFunc)
+
+	r, _ := http.NewRequest("GET", fiveRoute, nil)
+	benchRequest(b, router, r)
+}
 func BenchmarkAce_Param5(b *testing.B) {
 	router := loadAceSingle("GET", fiveColon, aceHandle)
 
@@ -478,9 +490,9 @@ func BenchmarkR2router_Param5(b *testing.B) {
 // func BenchmarkRevel_Param5(b *testing.B) {
 // 	router := loadRevelSingle("GET", fiveColon, "RevelController.Handle")
 
-// 	r, _ := http.NewRequest("GET", fiveRoute, nil)
-// 	benchRequest(b, router, r)
-// }
+//		r, _ := http.NewRequest("GET", fiveRoute, nil)
+//		benchRequest(b, router, r)
+//	}
 func BenchmarkRivet_Param5(b *testing.B) {
 	router := loadRivetSingle("GET", fiveColon, rivetHandler)
 
@@ -524,6 +536,12 @@ const twentyColon = "/:a/:b/:c/:d/:e/:f/:g/:h/:i/:j/:k/:l/:m/:n/:o/:p/:q/:r/:s/:
 const twentyBrace = "/{a}/{b}/{c}/{d}/{e}/{f}/{g}/{h}/{i}/{j}/{k}/{l}/{m}/{n}/{o}/{p}/{q}/{r}/{s}/{t}"
 const twentyRoute = "/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t"
 
+func BenchmarkHttpServeMux_Param20(b *testing.B) {
+	router := loadServeMuxSingle("GET", twentyBrace, httpHandlerFunc)
+
+	r, _ := http.NewRequest("GET", twentyRoute, nil)
+	benchRequest(b, router, r)
+}
 func BenchmarkAce_Param20(b *testing.B) {
 	router := loadAceSingle("GET", twentyColon, aceHandle)
 
@@ -688,9 +706,9 @@ func BenchmarkR2router_Param20(b *testing.B) {
 // func BenchmarkRevel_Param20(b *testing.B) {
 // 	router := loadRevelSingle("GET", twentyColon, "RevelController.Handle")
 
-// 	r, _ := http.NewRequest("GET", twentyRoute, nil)
-// 	benchRequest(b, router, r)
-// }
+//		r, _ := http.NewRequest("GET", twentyRoute, nil)
+//		benchRequest(b, router, r)
+//	}
 func BenchmarkRivet_Param20(b *testing.B) {
 	router := loadRivetSingle("GET", twentyColon, rivetHandler)
 
@@ -730,6 +748,12 @@ func BenchmarkVulcan_Param20(b *testing.B) {
 // }
 
 // Route with Param and write
+func BenchmarkHttpServeMux_ParamWrite(b *testing.B) {
+	router := loadServeMuxSingle("GET", "/user/{name}", serveMuxHandleWrite)
+
+	r, _ := http.NewRequest("GET", "/user/gordon", nil)
+	benchRequest(b, router, r)
+}
 func BenchmarkAce_ParamWrite(b *testing.B) {
 	router := loadAceSingle("GET", "/user/:name", aceHandleWrite)
 
@@ -894,9 +918,9 @@ func BenchmarkR2router_ParamWrite(b *testing.B) {
 // func BenchmarkRevel_ParamWrite(b *testing.B) {
 // 	router := loadRevelSingle("GET", "/user/:name", "RevelController.HandleWrite")
 
-// 	r, _ := http.NewRequest("GET", "/user/gordon", nil)
-// 	benchRequest(b, router, r)
-// }
+//		r, _ := http.NewRequest("GET", "/user/gordon", nil)
+//		benchRequest(b, router, r)
+//	}
 func BenchmarkRivet_ParamWrite(b *testing.B) {
 	router := loadRivetSingle("GET", "/user/:name", rivetHandlerWrite)
 

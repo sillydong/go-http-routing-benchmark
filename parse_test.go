@@ -56,6 +56,7 @@ var parseAPI = []route{
 }
 
 var (
+	parseHttpServeMux    http.Handler
 	parseAce             http.Handler
 	parseAero            http.Handler
 	parseBear            http.Handler
@@ -94,6 +95,9 @@ var (
 func init() {
 	println("#ParseAPI Routes:", len(parseAPI))
 
+	calcMem("HttpServeMux", func() {
+		parseHttpServeMux = loadServeMux(parseAPI)
+	})
 	calcMem("Ace", func() {
 		parseAce = loadAce(parseAPI)
 	})
@@ -198,6 +202,10 @@ func init() {
 }
 
 // Static
+func BenchmarkHttpServeMux_ParseStatic(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/users", nil)
+	benchRequest(b, parseHttpServeMux, req)
+}
 func BenchmarkAce_ParseStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/users", nil)
 	benchRequest(b, parseAce, req)
@@ -303,10 +311,10 @@ func BenchmarkR2router_ParseStatic(b *testing.B) {
 	benchRequest(b, parseR2router, req)
 }
 
-// func BenchmarkRevel_ParseStatic(b *testing.B) {
-// 	req, _ := http.NewRequest("GET", "/1/users", nil)
-// 	benchRequest(b, parseRevel, req)
-// }
+//	func BenchmarkRevel_ParseStatic(b *testing.B) {
+//		req, _ := http.NewRequest("GET", "/1/users", nil)
+//		benchRequest(b, parseRevel, req)
+//	}
 func BenchmarkRivet_ParseStatic(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/users", nil)
 	benchRequest(b, parseRivet, req)
@@ -334,6 +342,10 @@ func BenchmarkVulcan_ParseStatic(b *testing.B) {
 // }
 
 // One Param
+func BenchmarkHttpServeMux_ParseParam(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
+	benchRequest(b, parseHttpServeMux, req)
+}
 func BenchmarkAce_ParseParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
 	benchRequest(b, parseAce, req)
@@ -439,10 +451,10 @@ func BenchmarkR2router_ParseParam(b *testing.B) {
 	benchRequest(b, parseR2router, req)
 }
 
-// func BenchmarkRevel_ParseParam(b *testing.B) {
-// 	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
-// 	benchRequest(b, parseRevel, req)
-// }
+//	func BenchmarkRevel_ParseParam(b *testing.B) {
+//		req, _ := http.NewRequest("GET", "/1/classes/go", nil)
+//		benchRequest(b, parseRevel, req)
+//	}
 func BenchmarkRivet_ParseParam(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go", nil)
 	benchRequest(b, parseRivet, req)
@@ -470,6 +482,10 @@ func BenchmarkVulcan_ParseParam(b *testing.B) {
 // }
 
 // Two Params
+func BenchmarkHttpServeMux_Parse2Params(b *testing.B) {
+	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
+	benchRequest(b, parseHttpServeMux, req)
+}
 func BenchmarkAce_Parse2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
 	benchRequest(b, parseAce, req)
@@ -575,10 +591,10 @@ func BenchmarkR2router_Parse2Params(b *testing.B) {
 	benchRequest(b, parseR2router, req)
 }
 
-// func BenchmarkRevel_Parse2Params(b *testing.B) {
-// 	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
-// 	benchRequest(b, parseRevel, req)
-// }
+//	func BenchmarkRevel_Parse2Params(b *testing.B) {
+//		req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
+//		benchRequest(b, parseRevel, req)
+//	}
 func BenchmarkRivet_Parse2Params(b *testing.B) {
 	req, _ := http.NewRequest("GET", "/1/classes/go/123456789", nil)
 	benchRequest(b, parseRivet, req)
@@ -606,6 +622,9 @@ func BenchmarkVulcan_Parse2Params(b *testing.B) {
 // }
 
 // All Routes
+func BenchmarkHttpServeMux_ParseAll(b *testing.B) {
+	benchRoutes(b, parseHttpServeMux, parseAPI)
+}
 func BenchmarkAce_ParseAll(b *testing.B) {
 	benchRoutes(b, parseAce, parseAPI)
 }
@@ -685,9 +704,9 @@ func BenchmarkR2router_ParseAll(b *testing.B) {
 	benchRoutes(b, parseR2router, parseAPI)
 }
 
-// func BenchmarkRevel_ParseAll(b *testing.B) {
-// 	benchRoutes(b, parseRevel, parseAPI)
-// }
+//	func BenchmarkRevel_ParseAll(b *testing.B) {
+//		benchRoutes(b, parseRevel, parseAPI)
+//	}
 func BenchmarkRivet_ParseAll(b *testing.B) {
 	benchRoutes(b, parseRivet, parseAPI)
 }

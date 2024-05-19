@@ -28,7 +28,7 @@ import (
 	"github.com/dimfeld/httptreemux"
 	"github.com/emicklei/go-restful"
 	"github.com/gin-gonic/gin"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-martini/martini"
 	"github.com/go-zoo/bone"
 	"github.com/gocraft/web"
@@ -38,7 +38,6 @@ import (
 	"github.com/labstack/echo/v4"
 	llog "github.com/lunny/log"
 	"github.com/lunny/tango"
-	vulcan "github.com/mailgun/route"
 	"github.com/mikespook/possum"
 	possumrouter "github.com/mikespook/possum/router"
 	possumview "github.com/mikespook/possum/view"
@@ -48,6 +47,7 @@ import (
 	"github.com/pilu/traffic"
 	"github.com/plimble/ace"
 	"github.com/rcrowley/go-tigertonic"
+	vulcan "github.com/vulcand/route"
 
 	// "github.com/revel/pathtree"
 	// "github.com/revel/revel"
@@ -109,6 +109,35 @@ func httpHandlerFunc(_ http.ResponseWriter, _ *http.Request) {}
 
 func httpHandlerFuncTest(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, r.RequestURI)
+}
+
+// std ServeMux
+func serveMuxHandleWrite(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, r.PathValue("name"))
+}
+
+func loadServeMux(routes []route) http.Handler {
+	h := httpHandlerFunc
+	if loadTestHandler {
+		h = httpHandlerFuncTest
+	}
+
+	re := regexp.MustCompile(":([^/]*)")
+
+	mux := http.NewServeMux()
+	for _, route := range routes {
+		path := re.ReplaceAllString(route.path, "{$1}")
+
+		mux.HandleFunc(fmt.Sprintf("%s %s", route.method, path), h)
+	}
+
+	return mux
+}
+
+func loadServeMuxSingle(method, path string, handler http.HandlerFunc) http.Handler {
+	mux := http.NewServeMux()
+	mux.HandleFunc(fmt.Sprintf("%s %s", method, path), handler)
+	return mux
 }
 
 // Ace
@@ -1239,18 +1268,18 @@ func loadPatSingle(method, path string, handler http.Handler) http.Handler {
 }
 
 // Possum
-func possumHandler(c *possum.Context) error {
-	return nil
+func possumHandler(w http.ResponseWriter, req *http.Request) (interface{}, int) {
+	return nil, http.StatusOK
 }
 
-func possumHandlerWrite(c *possum.Context) error {
-	io.WriteString(c.Response, c.Request.URL.Query().Get("name"))
-	return nil
+func possumHandlerWrite(w http.ResponseWriter, req *http.Request) (interface{}, int) {
+	io.WriteString(w, req.URL.Query().Get("name"))
+	return nil, http.StatusOK
 }
 
-func possumHandlerTest(c *possum.Context) error {
-	io.WriteString(c.Response, c.Request.RequestURI)
-	return nil
+func possumHandlerTest(w http.ResponseWriter, req *http.Request) (interface{}, int) {
+	io.WriteString(w, req.RequestURI)
+	return nil, http.StatusOK
 }
 
 func loadPossum(routes []route) http.Handler {
@@ -1259,16 +1288,16 @@ func loadPossum(routes []route) http.Handler {
 		h = possumHandlerTest
 	}
 
-	router := possum.NewServerMux()
+	router := possum.New()
 	for _, route := range routes {
-		router.HandleFunc(possumrouter.Simple(route.path), h, possumview.Simple("text/html", "utf-8"))
+		router.Add(possumrouter.Simple(route.path), h, possumview.Simple("text/html", "utf-8"))
 	}
 	return router
 }
 
 func loadPossumSingle(method, path string, handler possum.HandlerFunc) http.Handler {
-	router := possum.NewServerMux()
-	router.HandleFunc(possumrouter.Simple(path), handler, possumview.Simple("text/html", "utf-8"))
+	router := possum.New()
+	router.Add(possumrouter.Simple(path), handler, possumview.Simple("text/html", "utf-8"))
 	return router
 }
 

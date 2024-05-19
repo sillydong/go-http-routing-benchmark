@@ -211,11 +211,7 @@ func init() {
 	println("#Static Routes:", len(staticRoutes))
 
 	calcMem("HttpServeMux", func() {
-		serveMux := http.NewServeMux()
-		for _, route := range staticRoutes {
-			serveMux.HandleFunc(route.path, httpHandlerFunc)
-		}
-		staticHttpServeMux = serveMux
+		staticHttpServeMux = loadServeMux(staticRoutes)
 	})
 
 	calcMem("Ace", func() {
@@ -405,9 +401,9 @@ func BenchmarkR2router_StaticAll(b *testing.B) {
 	benchRoutes(b, staticR2router, staticRoutes)
 }
 
-// func BenchmarkRevel_StaticAll(b *testing.B) {
-// 	benchRoutes(b, staticRevel, staticRoutes)
-// }
+//	func BenchmarkRevel_StaticAll(b *testing.B) {
+//		benchRoutes(b, staticRevel, staticRoutes)
+//	}
 func BenchmarkRivet_StaticAll(b *testing.B) {
 	benchRoutes(b, staticRivet, staticRoutes)
 }
